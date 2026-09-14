@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>Осенний двор — кто спрятался в листьях?</title>
+
+<style>
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+  user-select: none;
+  background: #e9f2f6;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+}
+
+#game {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  min-height: 500px;
+  overflow: hidden;
+}
+
+/* ЭКРАНЫ */
+
+.screen {
+  position: absolute;
+  inset: 0;
+  display: none;
+}
+
+.screen.active {
+  display: flex;
+}
+
+/* СТАРТ */
+
+#start {
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(255,255,255,.85) 0 8%, transparent 20%),
+    linear-gradient(#bfe6ff 0 55%, #d9d29b 55%);
+}
+
+.start-card {
+  width: min(780px, 92vw);
+  padding: clamp(24px, 5vw, 52px);
+  text-align: center;
+  background: rgba(255,255,255,.94);
+  border: 5px solid #fff;
+  border-radius: 32px;
+  box-shadow: 0 18px 45px rgba(70, 60, 45, .22);
+}
+
+.start-icon {
+  font-size: clamp(78px, 13vw, 145px);
+}
+
+.start-card h1 {
+  margin: 8px 0 10px;
+  color: #cf6b38;
+  font-size: clamp(32px, 5.5vw, 62px);
+}
+
+.start-card p {
+  margin: 0 auto 24px;
+  max-width: 640px;
+  color: #59463b;
+  font-size: clamp(18px, 2.5vw, 27px);
+  line-height: 1.35;
+}
+
+.big-btn {
+  padding: 15px 34px;
+  border: 0;
+  border-radius: 999px;
+  color: #fff;
+  background: linear-gradient(#f7a44b, #e97b32);
+  font-size: clamp(20px, 3vw, 30px);
+  font-weight: 900;
+  box-shadow: 0 8px 0 #bd5f2c;
+}
+
+.big-btn:active {
+  transform: translateY(5px);
+  box-shadow: 0 3px 0 #bd5f2c;
+}
+
+/* ИГРОВОЙ ЭКРАН */
+
+#play {
+  flex-direction: column;
+  background: #cde8f7;
+}
+
+.topbar {
+  position: absolute;
+  z-index: 30;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 20px;
+  background: rgba(255, 251, 241, .94);
+  border-bottom: 4px solid #fff;
+  box-shadow: 0 4px 14px rgba(70, 55, 45, .18);
+}
+
+.round-text {
+  font-size: clamp(18px, 2.2vw, 29px);
+  font-weight: 900;
+  color: #654a3c;
+}
+
+.progress {
+  display: flex;
+  gap: 7px;
+}
+
+.dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #ded5cc;
+  border: 3px solid #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,.14);
+}
+
+.dot.done {
+  background: #79cf98;
+}
+
+.dot.now {
+  background: #f29b49;
+  transform: scale(1.18);
+}
+
+.scene {
+  position: absolute;
+  inset: 72px 0 0;
+  overflow: hidden;
+  touch-action: none;
+
+  /* Пока временный двор. Позже заменим на background-image: url("fon.png") */
+  background:
+    linear-gradient(to bottom, transparent 0 57%, rgba(152,125,88,.20) 57% 100%),
+    linear-gradient(#bfe4f6 0 46%, #91b777 46% 62%, #c4a875 62%);
+}
+
+.house {
+  position: absolute;
+  left: 6%;
+  top: 8%;
+  width: 25%;
+  height: 47%;
+  border-radius: 12px 12px 0 0;
+  background: #edc98f;
+  box-shadow: inset 0 -18px 0 rgba(120,70,50,.12);
+}
+
+.house::before {
+  content: "";
+  position: absolute;
+  left: -7%;
+  top: -16%;
+  width: 114%;
+  height: 24%;
+  background: #a95643;
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+}
+
+.house::after {
+  content: "";
+  position: absolute;
+  left: 38%;
+  bottom: 0;
+  width: 25%;
+  height: 45%;
+  background: #7b5a47;
+  border-radius: 6px 6px 0 0;
+}
+
+.tree {
+  position: absolute;
+  right: 8%;
+  top: 5%;
+  width: 22%;
+  height: 54%;
+}
+
+.tree::before {
+  content: "";
+  position: absolute;
+  left: 44%;
+  bottom: 0;
+  width: 13%;
+  height: 48%;
+  background: #80553b;
+  border-radius: 50% 50% 8px 8px;
+}
+
+.tree::after {
+  content: "🍂";
+  position: absolute;
+  left: 2%;
+  top: -3%;
+  font-size: clamp(120px, 19vw, 235px);
+  filter: drop-shadow(0 10px 10px rgba(75,55,35,.16));
+}
+
+.path {
+  position: absolute;
+  left: 12%;
+  right: 12%;
+  bottom: -7%;
+  height: 45%;
+  background: #c4ad8b;
+  clip-path: polygon(38% 0, 62% 0, 100% 100%, 0 100%);
+  opacity: .95;
+}
+
+.instruction {
+  position: absolute;
+  z-index: 15;
+  left: 50%;
+  top: 3%;
+  transform: translateX(-50%);
+  padding: 10px 18px;
+  background: rgba(255,255,255,.95);
+  border: 4px solid #efa258;
+  border-radius: 22px;
+  color: #6a4b3e;
+  font-size: clamp(16px, 2vw, 24px);
+  font-weight: 900;
+  text-align: center;
+  box-shadow: 0 7px 18px rgba(70,50,40,.16);
+}
+
+/* СПРЯТАННЫЙ ОБЪЕКТ */
+
+.hidden-object {
+  position: absolute;
+  z-index: 5;
+  left: 50%;
+  bottom: 19%;
+  transform: translateX(-50%) scale(.85);
+  width: min(220px, 22vw);
+  height: min(220px, 22vw);
+  min-width: 130px;
+  min-height: 130px;
+  display: grid;
+  place-items: center;
+  opacity: 0;
+  transition: opacity .45s, transform .45s;
+  font-size: clamp(78px, 11vw, 145px);
+  filter: drop-shadow(0 9px 8px rgba(70,50,40,.22));
+}
+
+.hidden-object.revealed {
+  opacity: 1;
+  transform: translateX(-50%) scale(1);
+}
+
+/* КУЧА ЛИСТЬЕВ */
+
+.leaf-pile {
+  position: absolute;
+  z-index: 10;
+  left: 50%;
+  bottom: 13%;
+  width: min(430px, 46vw);
+  height: min(240px, 28vw);
+  min-width: 290px;
+  min-height: 180px;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.leaf {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: clamp(46px, 6vw, 76px);
+  height: clamp(46px, 6vw, 76px);
+  display: grid;
+  place-items: center;
+  font-size: clamp(38px, 5.5vw, 67px);
+  transform: translate(-50%, -50%) rotate(var(--r));
+  transition:
+    left .6s cubic-bezier(.2,.8,.2,1),
+    top .6s cubic-bezier(.2,.8,.2,1),
+    transform .6s cubic-bezier(.2,.8,.2,1),
+    opacity .6s;
+  filter: drop-shadow(0 4px 3px rgba(70,45,25,.18));
+}
+
+/* МЕТЛА */
+
+.broom {
+  position: absolute;
+  z-index: 20;
+  left: 18%;
+  bottom: 11%;
+  width: clamp(120px, 15vw, 210px);
+  height: clamp(120px, 15vw, 210px);
+  border: 0;
+  background: transparent;
+  font-size: clamp(90px, 12vw, 170px);
+  line-height: 1;
+  cursor: grab;
+  touch-action: none;
+  transform: rotate(-20deg);
+  filter: drop-shadow(0 8px 5px rgba(70,45,30,.25));
+}
+
+.broom.dragging {
+  cursor: grabbing;
+  transform: rotate(-8deg) scale(1.05);
+}
+
+.sweep-meter {
+  position: absolute;
+  z-index: 16;
+  right: 2.5%;
+  bottom: 3%;
+  width: min(260px, 30vw);
+  padding: 10px 14px;
+  border-radius: 20px;
+  background: rgba(255,255,255,.92);
+  box-shadow: 0 7px 18px rgba(70,50,40,.16);
+}
+
+.sweep-meter-title {
+  margin-bottom: 7px;
+  color: #6a4b3e;
+  font-weight: 900;
+  font-size: clamp(12px, 1.6vw, 18px);
+}
+
+.meter-track {
+  height: 16px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: #eadfd3;
+}
+
+.meter-fill {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, #f4b64b, #df7837);
+  transition: width .15s;
+}
+
+/* ОТКРЫТИЕ */
+
+.reveal-card {
+  position: absolute;
+  z-index: 35;
+  left: 50%;
+  top: 17%;
+  transform: translateX(-50%) scale(.8);
+  width: min(460px, 88vw);
+  padding: 17px 20px;
+  opacity: 0;
+  pointer-events: none;
+  text-align: center;
+  background: rgba(255,255,255,.97);
+  border: 5px solid #fff;
+  border-radius: 26px;
+  box-shadow: 0 14px 35px rgba(65,45,35,.24);
+  transition: opacity .35s, transform .35s;
+}
+
+.reveal-card.show {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(-50%) scale(1);
+}
+
+.reveal-card h2 {
+  margin: 0 0 8px;
+  color: #d56e36;
+  font-size: clamp(26px, 4vw, 43px);
+}
+
+.reveal-card p {
+  margin: 0 0 13px;
+  color: #59463b;
+  font-size: clamp(16px, 2vw, 22px);
+}
+
+/* ФИНАЛ */
+
+#finish {
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  text-align: center;
+  background:
+    radial-gradient(circle at 50% 35%, #fff7da 0 18%, transparent 42%),
+    linear-gradient(#bfe7fa 0 55%, #d9c98b 55%);
+}
+
+.finish-card {
+  width: min(740px, 92vw);
+  padding: 34px;
+  background: rgba(255,255,255,.95);
+  border: 5px solid white;
+  border-radius: 32px;
+  box-shadow: 0 17px 45px rgba(70,55,40,.22);
+}
+
+.finish-icon {
+  font-size: clamp(90px, 15vw, 170px);
+}
+
+.finish-card h1 {
+  margin: 8px 0;
+  color: #cf6b38;
+  font-size: clamp(34px, 6vw, 64px);
+}
+
+.finish-card p {
+  color: #59463b;
+  font-size: clamp(19px, 2.6vw, 28px);
+}
+
+@media (max-width: 760px) {
+  #game {
+    min-height: 420px;
+  }
+
+  .topbar {
+    height: 60px;
+    padding: 7px 10px;
+  }
+
+  .scene {
+    inset: 60px 0 0;
+  }
+
+  .dot {
+    width: 14px;
+    height: 14px;
+  }
+
+  .instruction {
+    top: 2%;
+    padding: 7px 10px;
+  }
+
+  .sweep-meter {
+    width: 34vw;
+  }
+}
+</style>
+</head>
+
+<body>
+<main id="game">
+
+  <!-- СТАРТ -->
+  <section id="start" class="screen active">
+    <div class="start-card">
+      <div class="start-icon">🍂🧹</div>
+      <h1>Кто спрятался в листьях?</h1>
+      <p>
+        Во дворе наступила осень. Размети метлой кучку листьев
+        и узнай, кто или что там спряталось!
+      </p>
+      <button id="startBtn" class="big-btn">НАЧАТЬ ИГРУ</button>
+    </div>
+  </section>
+
+  <!-- ИГРА -->
+  <section id="play" class="screen">
+
+    <header class="topbar">
+      <div id="roundText" class="round-text">Раунд 1 из 8</div>
+      <div id="progress" class="progress"></div>
+      <div style="width:44px"></div>
+    </header>
+
+    <div id="scene" class="scene">
+
+      <!-- временное оформление двора -->
+      <div class="house"></div>
+      <div class="tree"></div>
+      <div class="path"></div>
+
+      <div id="instruction" class="instruction">
+        Возьми метлу и размети листья!
+      </div>
+
+      <div id="hiddenObject" class="hidden-object">🐱</div>
+
+      <div id="leafPile" class="leaf-pile"></div>
+
+      <button id="broom" class="broom" aria-label="Метла">🧹</button>
+
+      <div class="sweep-meter">
+        <div class="sweep-meter-title">Размети листья</div>
+        <div class="meter-track">
+          <div id="meterFill" class="meter-fill"></div>
+        </div>
+      </div>
+
+      <div id="revealCard" class="reveal-card">
+        <h2>Нашли!</h2>
+        <p id="revealText">В листьях пряталась кошка!</p>
+        <button id="nextBtn" class="big-btn">ДАЛЬШЕ →</button>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ФИНАЛ -->
+  <section id="finish" class="screen">
+    <div class="finish-card">
+      <div class="finish-icon">🍁🎉</div>
+      <h1>Все кучки разобраны!</h1>
+      <p>Ты нашёл всё, что пряталось в осенних листьях!</p>
+      <button id="againBtn" class="big-btn">ИГРАТЬ ЕЩЁ</button>
+    </div>
+  </section>
+
+</main>
+
+<script>
+/*
+  =========================================================
+  КОСТЯК ИГРЫ
+  Позже сюда можно подставить настоящие PNG:
+  background: fon.png
+  broom: broom.png
+  leaves: leaves/...
+  hidden objects: objects/...
+  =========================================================
+*/
+
+const ROUNDS = [
+  { emoji: "🐱", name: "кошка" },
+  { emoji: "⚽", name: "мяч" },
+  { emoji: "🐶", name: "щенок" },
+  { emoji: "🚗", name: "машинка" },
+  { emoji: "🦔", name: "ёжик" },
+  { emoji: "🧸", name: "игрушка" },
+  { emoji: "🐿️", name: "белочка" },
+  { emoji: "🎒", name: "рюкзак" }
+];
+
+const LEAF_COUNT = 22;
+const SWEEPS_TO_REVEAL = 7;
+
+let round = 0;
+let sweepCount = 0;
+let dragging = false;
+let lastX = 0;
+let lastY = 0;
+let movedDuringDrag = false;
+
+const $ = selector => document.querySelector(selector);
+
+function showScreen(selector) {
+  document
+    .querySelectorAll(".screen")
+    .forEach(screen => screen.classList.remove("active"));
+
+  $(selector).classList.add("active");
+}
+
+function renderProgress() {
+  $("#progress").innerHTML = ROUNDS
+    .map((_, index) => {
+      const done = index < round ? "done" : "";
+      const now = index === round ? "now" : "";
+      return `<i class="dot ${done} ${now}"></i>`;
+    })
+    .join("");
+}
+
+function createLeafPile() {
+  const pile = $("#leafPile");
+  pile.innerHTML = "";
+
+  const leafEmoji = ["🍁", "🍂", "🍁", "🍂"];
+
+  for (let i = 0; i < LEAF_COUNT; i++) {
+    const leaf = document.createElement("div");
+    leaf.className = "leaf";
+    leaf.textContent = leafEmoji[i % leafEmoji.length];
+
+    const x = 20 + Math.random() * 60;
+    const y = 22 + Math.random() * 56;
+    const rotate = Math.round(Math.random() * 120 - 60);
+
+    leaf.style.left = x + "%";
+    leaf.style.top = y + "%";
+    leaf.style.setProperty("--r", rotate + "deg");
+
+    pile.appendChild(leaf);
+  }
+}
+
+function resetBroom() {
+  const broom = $("#broom");
+  broom.style.left = "18%";
+  broom.style.top = "";
+  broom.style.bottom = "11%";
+}
+
+function startRound() {
+  sweepCount = 0;
+  dragging = false;
+  movedDuringDrag = false;
+
+  showScreen("#play");
+  renderProgress();
+
+  $("#roundText").textContent =
+    `Раунд ${round + 1} из ${ROUNDS.length}`;
+
+  $("#instruction").textContent =
+    "Возьми метлу и размети листья!";
+
+  $("#meterFill").style.width = "0%";
+
+  $("#revealCard").classList.remove("show");
+  $("#hiddenObject").classList.remove("revealed");
+
+  const item = ROUNDS[round];
+  $("#hiddenObject").textContent = item.emoji;
+  $("#revealText").textContent =
+    `В листьях пряталась ${item.name}!`;
+
+  resetBroom();
+  createLeafPile();
+}
+
+function scatterLeaves(strength = 1) {
+  const leaves = [...document.querySelectorAll(".leaf")];
+
+  leaves.forEach((leaf, index) => {
+    const angle = (Math.PI * 2 * index) / leaves.length
+      + Math.random() * .65;
+
+    const distance = 32 + Math.random() * 42 * strength;
+
+    const newX = 50 + Math.cos(angle) * distance;
+    const newY = 50 + Math.sin(angle) * distance * .65;
+
+    const rotate =
+      Math.round(Math.random() * 520 - 260);
+
+    leaf.style.left = newX + "%";
+    leaf.style.top = newY + "%";
+    leaf.style.transform =
+      `translate(-50%, -50%) rotate(${rotate}deg) scale(${0.86 + Math.random() * .2})`;
+  });
+}
+
+function doSweep() {
+  if (sweepCount >= SWEEPS_TO_REVEAL) return;
+
+  sweepCount++;
+
+  const progress =
+    Math.min(100, (sweepCount / SWEEPS_TO_REVEAL) * 100);
+
+  $("#meterFill").style.width = progress + "%";
+
+  scatterLeaves(.25 + sweepCount / SWEEPS_TO_REVEAL);
+
+  if (sweepCount >= SWEEPS_TO_REVEAL) {
+    revealObject();
+  }
+}
+
+function revealObject() {
+  const leaves = [...document.querySelectorAll(".leaf")];
+
+  leaves.forEach((leaf, index) => {
+    const goRight = index % 2 === 0;
+    const x = goRight
+      ? 95 + Math.random() * 35
+      : -25 - Math.random() * 35;
+
+    const y = -10 + Math.random() * 115;
+
+    leaf.style.left = x + "%";
+    leaf.style.top = y + "%";
+    leaf.style.opacity = ".25";
+    leaf.style.transform =
+      `translate(-50%, -50%) rotate(${Math.random() * 800 - 400}deg) scale(.6)`;
+  });
+
+  $("#hiddenObject").classList.add("revealed");
+  $("#instruction").textContent = "Кто же это?";
+
+  setTimeout(() => {
+    $("#revealCard").classList.add("show");
+  }, 650);
+}
+
+function nextRound() {
+  if (round < ROUNDS.length - 1) {
+    round++;
+    startRound();
+  } else {
+    showScreen("#finish");
+  }
+}
+
+/* УПРАВЛЕНИЕ МЕТЛОЙ */
+
+function moveBroom(clientX, clientY) {
+  const scene = $("#scene");
+  const broom = $("#broom");
+  const rect = scene.getBoundingClientRect();
+
+  const x = clientX - rect.left;
+  const y = clientY - rect.top;
+
+  const broomRect = broom.getBoundingClientRect();
+
+  const left = Math.max(
+    0,
+    Math.min(rect.width - broomRect.width, x - broomRect.width / 2)
+  );
+
+  const top = Math.max(
+    0,
+    Math.min(rect.height - broomRect.height, y - broomRect.height / 2)
+  );
+
+  broom.style.left = left + "px";
+  broom.style.top = top + "px";
+  broom.style.bottom = "auto";
+}
+
+function broomPointerDown(event) {
+  if (sweepCount >= SWEEPS_TO_REVEAL) return;
+
+  dragging = true;
+  movedDuringDrag = false;
+
+  lastX = event.clientX;
+  lastY = event.clientY;
+
+  $("#broom").classList.add("dragging");
+  $("#broom").setPointerCapture?.(event.pointerId);
+
+  moveBroom(event.clientX, event.clientY);
+}
+
+function broomPointerMove(event) {
+  if (!dragging) return;
+
+  const dx = event.clientX - lastX;
+  const dy = event.clientY - lastY;
+  const distance = Math.hypot(dx, dy);
+
+  moveBroom(event.clientX, event.clientY);
+
+  if (distance > 34) {
+    movedDuringDrag = true;
+    lastX = event.clientX;
+    lastY = event.clientY;
+    doSweep();
+  }
+}
+
+function broomPointerUp(event) {
+  if (!dragging) return;
+
+  dragging = false;
+  $("#broom").classList.remove("dragging");
+
+  /*
+    Для самых маленьких:
+    если ребёнок просто нажал на метлу, а не тащил,
+    это тоже считается одним взмахом.
+  */
+  if (!movedDuringDrag) {
+    doSweep();
+  }
+}
+
+/* КНОПКИ */
+
+$("#startBtn").addEventListener("click", () => {
+  round = 0;
+  startRound();
+});
+
+$("#nextBtn").addEventListener("click", nextRound);
+
+$("#againBtn").addEventListener("click", () => {
+  round = 0;
+  startRound();
+});
+
+$("#broom").addEventListener("pointerdown", broomPointerDown);
+$("#broom").addEventListener("pointermove", broomPointerMove);
+$("#broom").addEventListener("pointerup", broomPointerUp);
+$("#broom").addEventListener("pointercancel", broomPointerUp);
+
+renderProgress();
+</script>
+
+</body>
+</html>
