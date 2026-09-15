@@ -143,8 +143,8 @@ html, body {
     transform:
         translate(-50%, -50%);
 
-    width: min(43vw, 500px);
-    height: min(26vw, 280px);
+    width: min(48vw, 560px);
+    height: min(31vw, 340px);
 
     pointer-events: none;
 }
@@ -207,6 +207,43 @@ html, body {
     transform:
         rotate(-18deg)
         scale(1.04);
+}
+
+
+/* ---------- ДВОРНИК ---------- */
+
+#janitor {
+    position: absolute;
+    z-index: 35;
+    left: 2%;
+    bottom: 3%;
+    width: min(22vw, 280px);
+    height: min(40vw, 440px);
+    object-fit: contain;
+    object-position: left bottom;
+    pointer-events: none;
+    filter: drop-shadow(0 8px 8px rgba(0,0,0,.22));
+    transition: transform .35s ease;
+}
+
+#janitor.surprised {
+    animation: janitorLook .55s ease;
+}
+
+#janitor.wow {
+    animation: janitorWow .55s ease;
+}
+
+@keyframes janitorLook {
+    0%   { transform: rotate(0deg) scale(1); }
+    35%  { transform: rotate(2deg) scale(1.04); }
+    100% { transform: rotate(0deg) scale(1); }
+}
+
+@keyframes janitorWow {
+    0%   { transform: scale(.92); }
+    55%  { transform: scale(1.08); }
+    100% { transform: scale(1); }
 }
 
 /* ---------- КНОПКА ДАЛЬШЕ ---------- */
@@ -406,10 +443,17 @@ html, body {
 
     #leafPile {
 
-        width: 58vw;
-        height: 36vw;
+        width: 64vw;
+        height: 42vw;
 
         top: 72%;
+    }
+
+    #janitor {
+        width: 27vw;
+        height: 48vw;
+        left: 1%;
+        bottom: 2%;
     }
 
     #broom {
@@ -460,6 +504,14 @@ html, body {
     <!-- КУЧА ЛИСТЬЕВ -->
 
     <div id="leafPile"></div>
+
+    <!-- ДВОРНИК СЛЕВА -->
+    <img
+        id="janitor"
+        class="surprised"
+        src="janitor/surprised.png"
+        alt="Дворник"
+        draggable="false">
 
     <!-- МЕТЛА -->
 
@@ -516,7 +568,7 @@ const TOTAL_ROUNDS = 8;
 
 /* сколько листьев будет в кучке */
 
-const LEAF_COUNT = 32;
+const LEAF_COUNT = 60;
 
 /* ======================================================
    ПЕРЕМЕННЫЕ
@@ -551,6 +603,9 @@ const hero =
 
 const broom =
     document.getElementById("broom");
+
+const janitor =
+    document.getElementById("janitor");
 
 const pile =
     document.getElementById("leafPile");
@@ -784,6 +839,10 @@ function startRound() {
 
     hint.innerHTML =
         "🧹 Проведи метлой по листьям";
+
+    /* В начале каждого раунда дворник удивлён */
+    janitor.src = "janitor/surprised.png";
+    janitor.className = "surprised";
 
     roundText.innerHTML =
         `Раунд ${currentRound + 1} из 8`;
@@ -1131,6 +1190,12 @@ function makeSweep(direction) {
     sweepStage++;
 
     playSweepSound();
+
+    /* Дворник реагирует на каждый взмах */
+    janitor.src = "janitor/surprised.png";
+    janitor.className = "";
+    void janitor.offsetWidth;
+    janitor.className = "surprised";
 
     scatterLeaves(
         sweepStage,
