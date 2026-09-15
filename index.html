@@ -1,830 +1,1571 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-<title>Осенний двор — кто спрятался в листьях?</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Кто спрятался в листьях?</title>
 
 <style>
 * {
-  box-sizing: border-box;
-  -webkit-tap-highlight-color: transparent;
+    box-sizing: border-box;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
 html, body {
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  overflow: hidden;
-  font-family: Arial, sans-serif;
-  user-select: none;
-  background: #e9f2f6;
-}
-
-button {
-  font: inherit;
-  cursor: pointer;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+    background: #222;
 }
 
 #game {
-  position: relative;
-  width: 100vw;
-  height: 100vh;
-  min-height: 500px;
-  overflow: hidden;
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+
+    background-image: url("fon.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    touch-action: none;
 }
 
-/* ЭКРАНЫ */
-
-.screen {
-  position: absolute;
-  inset: 0;
-  display: none;
-}
-
-.screen.active {
-  display: flex;
-}
-
-/* СТАРТ */
-
-#start {
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  background:
-    radial-gradient(circle at 15% 20%, rgba(255,255,255,.85) 0 8%, transparent 20%),
-    linear-gradient(#bfe6ff 0 55%, #d9d29b 55%);
-}
-
-.start-card {
-  width: min(780px, 92vw);
-  padding: clamp(24px, 5vw, 52px);
-  text-align: center;
-  background: rgba(255,255,255,.94);
-  border: 5px solid #fff;
-  border-radius: 32px;
-  box-shadow: 0 18px 45px rgba(70, 60, 45, .22);
-}
-
-.start-icon {
-  font-size: clamp(78px, 13vw, 145px);
-}
-
-.start-card h1 {
-  margin: 8px 0 10px;
-  color: #cf6b38;
-  font-size: clamp(32px, 5.5vw, 62px);
-}
-
-.start-card p {
-  margin: 0 auto 24px;
-  max-width: 640px;
-  color: #59463b;
-  font-size: clamp(18px, 2.5vw, 27px);
-  line-height: 1.35;
-}
-
-.big-btn {
-  padding: 15px 34px;
-  border: 0;
-  border-radius: 999px;
-  color: #fff;
-  background: linear-gradient(#f7a44b, #e97b32);
-  font-size: clamp(20px, 3vw, 30px);
-  font-weight: 900;
-  box-shadow: 0 8px 0 #bd5f2c;
-}
-
-.big-btn:active {
-  transform: translateY(5px);
-  box-shadow: 0 3px 0 #bd5f2c;
-}
-
-/* ИГРОВОЙ ЭКРАН */
-
-#play {
-  flex-direction: column;
-  background: #cde8f7;
-}
+/* ---------- ВЕРХНЯЯ ПАНЕЛЬ ---------- */
 
 .topbar {
-  position: absolute;
-  z-index: 30;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 72px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 10px 20px;
-  background: rgba(255, 251, 241, .94);
-  border-bottom: 4px solid #fff;
-  box-shadow: 0 4px 14px rgba(70, 55, 45, .18);
+    position: absolute;
+    z-index: 100;
+    top: 15px;
+    left: 18px;
+    right: 18px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    pointer-events: none;
 }
 
-.round-text {
-  font-size: clamp(18px, 2.2vw, 29px);
-  font-weight: 900;
-  color: #654a3c;
+.round {
+    padding: 9px 17px;
+    border-radius: 18px;
+
+    background: rgba(255,255,255,.92);
+    border: 3px solid white;
+
+    color: #65483a;
+    font-size: clamp(16px, 2vw, 24px);
+    font-weight: 900;
+
+    box-shadow: 0 5px 15px rgba(0,0,0,.18);
 }
 
 .progress {
-  display: flex;
-  gap: 7px;
+    display: flex;
+    gap: 7px;
 }
 
 .dot {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: #ded5cc;
-  border: 3px solid #fff;
-  box-shadow: 0 1px 4px rgba(0,0,0,.14);
+    width: 17px;
+    height: 17px;
+
+    border-radius: 50%;
+    border: 2px solid white;
+
+    background: #d8d2ca;
+
+    box-shadow: 0 2px 5px rgba(0,0,0,.18);
+}
+
+.dot.active {
+    background: #f39745;
+    transform: scale(1.2);
 }
 
 .dot.done {
-  background: #79cf98;
+    background: #77c993;
 }
 
-.dot.now {
-  background: #f29b49;
-  transform: scale(1.18);
+/* ---------- ПОДСКАЗКА ---------- */
+
+#hint {
+    position: absolute;
+    z-index: 90;
+
+    top: 70px;
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    padding: 10px 20px;
+
+    background: rgba(255,255,255,.94);
+    border: 3px solid #f0a05b;
+    border-radius: 22px;
+
+    color: #62483c;
+
+    font-size: clamp(16px, 2vw, 23px);
+    font-weight: 900;
+
+    white-space: nowrap;
+
+    box-shadow: 0 5px 15px rgba(0,0,0,.15);
 }
 
-.scene {
-  position: absolute;
-  inset: 72px 0 0;
-  overflow: hidden;
-  touch-action: none;
+/* ---------- ГЕРОЙ ---------- */
 
-  /* Пока временный двор. Позже заменим на background-image: url("fon.png") */
-  background:
-    linear-gradient(to bottom, transparent 0 57%, rgba(152,125,88,.20) 57% 100%),
-    linear-gradient(#bfe4f6 0 46%, #91b777 46% 62%, #c4a875 62%);
+#hero {
+    position: absolute;
+
+    z-index: 10;
+
+    left: 50%;
+    top: 67%;
+
+    width: min(26vw, 300px);
+    height: min(26vw, 300px);
+
+    object-fit: contain;
+
+    transform:
+        translate(-50%, -50%)
+        scale(.92);
+
+    opacity: 0;
+
+    clip-path: inset(100% 0 0 0);
+
+    transition:
+        clip-path .8s ease,
+        opacity .6s ease,
+        transform .8s ease;
+
+    filter:
+        drop-shadow(0 8px 8px rgba(0,0,0,.2));
+
+    pointer-events: none;
 }
 
-.house {
-  position: absolute;
-  left: 6%;
-  top: 8%;
-  width: 25%;
-  height: 47%;
-  border-radius: 12px 12px 0 0;
-  background: #edc98f;
-  box-shadow: inset 0 -18px 0 rgba(120,70,50,.12);
+/* после первого взмаха */
+
+#hero.stage1 {
+    opacity: 1;
+
+    clip-path:
+        inset(72% 0 0 0);
 }
 
-.house::before {
-  content: "";
-  position: absolute;
-  left: -7%;
-  top: -16%;
-  width: 114%;
-  height: 24%;
-  background: #a95643;
-  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+/* после второго */
+
+#hero.stage2 {
+    opacity: 1;
+
+    clip-path:
+        inset(38% 0 0 0);
+
+    transform:
+        translate(-50%, -50%)
+        scale(.96);
 }
 
-.house::after {
-  content: "";
-  position: absolute;
-  left: 38%;
-  bottom: 0;
-  width: 25%;
-  height: 45%;
-  background: #7b5a47;
-  border-radius: 6px 6px 0 0;
+/* после третьего */
+
+#hero.stage3 {
+    opacity: 1;
+
+    clip-path:
+        inset(0);
+
+    transform:
+        translate(-50%, -50%)
+        scale(1);
 }
 
-.tree {
-  position: absolute;
-  right: 8%;
-  top: 5%;
-  width: 22%;
-  height: 54%;
+/* ---------- КУЧКА ---------- */
+
+#leafPile {
+
+    position: absolute;
+
+    z-index: 20;
+
+    left: 50%;
+    top: 70%;
+
+    transform:
+        translate(-50%, -50%);
+
+    width: min(43vw, 500px);
+    height: min(26vw, 280px);
+
+    pointer-events: none;
 }
 
-.tree::before {
-  content: "";
-  position: absolute;
-  left: 44%;
-  bottom: 0;
-  width: 13%;
-  height: 48%;
-  background: #80553b;
-  border-radius: 50% 50% 8px 8px;
-}
-
-.tree::after {
-  content: "🍂";
-  position: absolute;
-  left: 2%;
-  top: -3%;
-  font-size: clamp(120px, 19vw, 235px);
-  filter: drop-shadow(0 10px 10px rgba(75,55,35,.16));
-}
-
-.path {
-  position: absolute;
-  left: 12%;
-  right: 12%;
-  bottom: -7%;
-  height: 45%;
-  background: #c4ad8b;
-  clip-path: polygon(38% 0, 62% 0, 100% 100%, 0 100%);
-  opacity: .95;
-}
-
-.instruction {
-  position: absolute;
-  z-index: 15;
-  left: 50%;
-  top: 3%;
-  transform: translateX(-50%);
-  padding: 10px 18px;
-  background: rgba(255,255,255,.95);
-  border: 4px solid #efa258;
-  border-radius: 22px;
-  color: #6a4b3e;
-  font-size: clamp(16px, 2vw, 24px);
-  font-weight: 900;
-  text-align: center;
-  box-shadow: 0 7px 18px rgba(70,50,40,.16);
-}
-
-/* СПРЯТАННЫЙ ОБЪЕКТ */
-
-.hidden-object {
-  position: absolute;
-  z-index: 5;
-  left: 50%;
-  bottom: 19%;
-  transform: translateX(-50%) scale(.85);
-  width: min(220px, 22vw);
-  height: min(220px, 22vw);
-  min-width: 130px;
-  min-height: 130px;
-  display: grid;
-  place-items: center;
-  opacity: 0;
-  transition: opacity .45s, transform .45s;
-  font-size: clamp(78px, 11vw, 145px);
-  filter: drop-shadow(0 9px 8px rgba(70,50,40,.22));
-}
-
-.hidden-object.revealed {
-  opacity: 1;
-  transform: translateX(-50%) scale(1);
-}
-
-/* КУЧА ЛИСТЬЕВ */
-
-.leaf-pile {
-  position: absolute;
-  z-index: 10;
-  left: 50%;
-  bottom: 13%;
-  width: min(430px, 46vw);
-  height: min(240px, 28vw);
-  min-width: 290px;
-  min-height: 180px;
-  transform: translateX(-50%);
-  pointer-events: none;
-}
+/* отдельный лист */
 
 .leaf {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: clamp(46px, 6vw, 76px);
-  height: clamp(46px, 6vw, 76px);
-  display: grid;
-  place-items: center;
-  font-size: clamp(38px, 5.5vw, 67px);
-  transform: translate(-50%, -50%) rotate(var(--r));
-  transition:
-    left .6s cubic-bezier(.2,.8,.2,1),
-    top .6s cubic-bezier(.2,.8,.2,1),
-    transform .6s cubic-bezier(.2,.8,.2,1),
-    opacity .6s;
-  filter: drop-shadow(0 4px 3px rgba(70,45,25,.18));
+
+    position: absolute;
+
+    width: clamp(48px, 5.5vw, 82px);
+    height: clamp(48px, 5.5vw, 82px);
+
+    object-fit: contain;
+
+    filter:
+        drop-shadow(0 4px 3px rgba(0,0,0,.18));
+
+    transition:
+        left 1.6s cubic-bezier(.16,.75,.22,1),
+        top 1.6s cubic-bezier(.16,.75,.22,1),
+        transform 1.7s ease,
+        opacity 1.5s ease;
 }
 
-/* МЕТЛА */
+/* ---------- МЕТЛА ---------- */
 
-.broom {
-  position: absolute;
-  z-index: 20;
-  left: 18%;
-  bottom: 11%;
-  width: clamp(120px, 15vw, 210px);
-  height: clamp(120px, 15vw, 210px);
-  border: 0;
-  background: transparent;
-  font-size: clamp(90px, 12vw, 170px);
-  line-height: 1;
-  cursor: grab;
-  touch-action: none;
-  transform: rotate(-20deg);
-  filter: drop-shadow(0 8px 5px rgba(70,45,30,.25));
+#broom {
+
+    position: absolute;
+
+    z-index: 50;
+
+    right: 4%;
+    bottom: 4%;
+
+    width: min(22vw, 280px);
+    height: min(37vw, 420px);
+
+    object-fit: contain;
+
+    cursor: grab;
+
+    touch-action: none;
+
+    transform:
+        rotate(-10deg);
+
+    transform-origin:
+        65% 70%;
+
+    filter:
+        drop-shadow(0 9px 7px rgba(0,0,0,.28));
 }
 
-.broom.dragging {
-  cursor: grabbing;
-  transform: rotate(-8deg) scale(1.05);
+#broom.dragging {
+
+    cursor: grabbing;
+
+    transform:
+        rotate(-18deg)
+        scale(1.04);
 }
 
-.sweep-meter {
-  position: absolute;
-  z-index: 16;
-  right: 2.5%;
-  bottom: 3%;
-  width: min(260px, 30vw);
-  padding: 10px 14px;
-  border-radius: 20px;
-  background: rgba(255,255,255,.92);
-  box-shadow: 0 7px 18px rgba(70,50,40,.16);
+/* ---------- КНОПКА ДАЛЬШЕ ---------- */
+
+#nextContainer {
+
+    position: absolute;
+
+    z-index: 120;
+
+    left: 50%;
+    bottom: 5%;
+
+    transform:
+        translateX(-50%)
+        scale(.7);
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    transition: .4s;
 }
 
-.sweep-meter-title {
-  margin-bottom: 7px;
-  color: #6a4b3e;
-  font-weight: 900;
-  font-size: clamp(12px, 1.6vw, 18px);
+#nextContainer.show {
+
+    opacity: 1;
+
+    transform:
+        translateX(-50%)
+        scale(1);
+
+    pointer-events: auto;
 }
 
-.meter-track {
-  height: 16px;
-  border-radius: 999px;
-  overflow: hidden;
-  background: #eadfd3;
+#nextButton {
+
+    border: none;
+
+    padding: 14px 34px;
+
+    border-radius: 999px;
+
+    background:
+        linear-gradient(#f6a44e,#e77c32);
+
+    color: white;
+
+    font-size:
+        clamp(20px,2.5vw,28px);
+
+    font-weight: 900;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 7px 0 #b75c2d;
 }
 
-.meter-fill {
-  width: 0%;
-  height: 100%;
-  background: linear-gradient(90deg, #f4b64b, #df7837);
-  transition: width .15s;
+#nextButton:active {
+
+    transform:
+        translateY(4px);
+
+    box-shadow:
+        0 3px 0 #b75c2d;
 }
 
-/* ОТКРЫТИЕ */
+/* ---------- ВОЛШЕБНЫЕ ИСКРЫ ---------- */
 
-.reveal-card {
-  position: absolute;
-  z-index: 35;
-  left: 50%;
-  top: 17%;
-  transform: translateX(-50%) scale(.8);
-  width: min(460px, 88vw);
-  padding: 17px 20px;
-  opacity: 0;
-  pointer-events: none;
-  text-align: center;
-  background: rgba(255,255,255,.97);
-  border: 5px solid #fff;
-  border-radius: 26px;
-  box-shadow: 0 14px 35px rgba(65,45,35,.24);
-  transition: opacity .35s, transform .35s;
+.spark {
+
+    position: absolute;
+
+    z-index: 80;
+
+    pointer-events: none;
+
+    font-size: 35px;
+
+    animation:
+        sparkle 1.4s ease-out forwards;
 }
 
-.reveal-card.show {
-  opacity: 1;
-  pointer-events: auto;
-  transform: translateX(-50%) scale(1);
+@keyframes sparkle {
+
+    0% {
+        opacity: 0;
+        transform:
+            scale(.2)
+            rotate(0deg);
+    }
+
+    25% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+
+        transform:
+            translateY(-120px)
+            scale(1.5)
+            rotate(200deg);
+    }
 }
 
-.reveal-card h2 {
-  margin: 0 0 8px;
-  color: #d56e36;
-  font-size: clamp(26px, 4vw, 43px);
-}
-
-.reveal-card p {
-  margin: 0 0 13px;
-  color: #59463b;
-  font-size: clamp(16px, 2vw, 22px);
-}
-
-/* ФИНАЛ */
+/* ---------- ФИНАЛ ---------- */
 
 #finish {
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  text-align: center;
-  background:
-    radial-gradient(circle at 50% 35%, #fff7da 0 18%, transparent 42%),
-    linear-gradient(#bfe7fa 0 55%, #d9c98b 55%);
+
+    position: absolute;
+
+    z-index: 200;
+
+    inset: 0;
+
+    display: none;
+
+    align-items: center;
+    justify-content: center;
+
+    background:
+        rgba(255,245,225,.65);
+
+    backdrop-filter:
+        blur(4px);
 }
 
-.finish-card {
-  width: min(740px, 92vw);
-  padding: 34px;
-  background: rgba(255,255,255,.95);
-  border: 5px solid white;
-  border-radius: 32px;
-  box-shadow: 0 17px 45px rgba(70,55,40,.22);
+.finishBox {
+
+    padding: 35px;
+
+    width:
+        min(650px,90vw);
+
+    text-align: center;
+
+    border-radius: 30px;
+
+    background:
+        rgba(255,255,255,.96);
+
+    box-shadow:
+        0 15px 40px rgba(0,0,0,.25);
 }
 
-.finish-icon {
-  font-size: clamp(90px, 15vw, 170px);
+.finishBox h1 {
+
+    color: #c86632;
+
+    font-size:
+        clamp(34px,5vw,58px);
 }
 
-.finish-card h1 {
-  margin: 8px 0;
-  color: #cf6b38;
-  font-size: clamp(34px, 6vw, 64px);
+.finishBox p {
+
+    color: #5d473c;
+
+    font-size:
+        clamp(19px,2.5vw,27px);
 }
 
-.finish-card p {
-  color: #59463b;
-  font-size: clamp(19px, 2.6vw, 28px);
+#again {
+
+    border: none;
+
+    border-radius: 999px;
+
+    padding:
+        14px 30px;
+
+    background:
+        #ed8b3e;
+
+    color: white;
+
+    font-weight: 900;
+
+    font-size:
+        23px;
+
+    cursor: pointer;
 }
 
-@media (max-width: 760px) {
-  #game {
-    min-height: 420px;
-  }
+/* ---------- МОБИЛЬНЫЕ ---------- */
 
-  .topbar {
-    height: 60px;
-    padding: 7px 10px;
-  }
+@media(max-width:700px) {
 
-  .scene {
-    inset: 60px 0 0;
-  }
+    #hero {
 
-  .dot {
-    width: 14px;
-    height: 14px;
-  }
+        width: 37vw;
+        height: 37vw;
 
-  .instruction {
-    top: 2%;
-    padding: 7px 10px;
-  }
+        top: 69%;
+    }
 
-  .sweep-meter {
-    width: 34vw;
-  }
+    #leafPile {
+
+        width: 58vw;
+        height: 36vw;
+
+        top: 72%;
+    }
+
+    #broom {
+
+        width: 30vw;
+        height: 45vw;
+    }
+
+    #hint {
+
+        top: 58px;
+
+        font-size: 14px;
+    }
 }
 </style>
 </head>
 
 <body>
-<main id="game">
 
-  <!-- СТАРТ -->
-  <section id="start" class="screen active">
-    <div class="start-card">
-      <div class="start-icon">🍂🧹</div>
-      <h1>Кто спрятался в листьях?</h1>
-      <p>
-        Во дворе наступила осень. Размети метлой кучку листьев
-        и узнай, кто или что там спряталось!
-      </p>
-      <button id="startBtn" class="big-btn">НАЧАТЬ ИГРУ</button>
-    </div>
-  </section>
+<div id="game">
 
-  <!-- ИГРА -->
-  <section id="play" class="screen">
+    <div class="topbar">
 
-    <header class="topbar">
-      <div id="roundText" class="round-text">Раунд 1 из 8</div>
-      <div id="progress" class="progress"></div>
-      <div style="width:44px"></div>
-    </header>
-
-    <div id="scene" class="scene">
-
-      <!-- временное оформление двора -->
-      <div class="house"></div>
-      <div class="tree"></div>
-      <div class="path"></div>
-
-      <div id="instruction" class="instruction">
-        Возьми метлу и размети листья!
-      </div>
-
-      <div id="hiddenObject" class="hidden-object">🐱</div>
-
-      <div id="leafPile" class="leaf-pile"></div>
-
-      <button id="broom" class="broom" aria-label="Метла">🧹</button>
-
-      <div class="sweep-meter">
-        <div class="sweep-meter-title">Размети листья</div>
-        <div class="meter-track">
-          <div id="meterFill" class="meter-fill"></div>
+        <div
+            class="round"
+            id="roundText">
+            Раунд 1 из 8
         </div>
-      </div>
 
-      <div id="revealCard" class="reveal-card">
-        <h2>Нашли!</h2>
-        <p id="revealText">В листьях пряталась кошка!</p>
-        <button id="nextBtn" class="big-btn">ДАЛЬШЕ →</button>
-      </div>
+        <div
+            class="progress"
+            id="progress">
+        </div>
 
     </div>
-  </section>
 
-  <!-- ФИНАЛ -->
-  <section id="finish" class="screen">
-    <div class="finish-card">
-      <div class="finish-icon">🍁🎉</div>
-      <h1>Все кучки разобраны!</h1>
-      <p>Ты нашёл всё, что пряталось в осенних листьях!</p>
-      <button id="againBtn" class="big-btn">ИГРАТЬ ЕЩЁ</button>
+    <div id="hint">
+        🧹 Проведи метлой по листьям
     </div>
-  </section>
 
-</main>
+    <!-- ГЕРОЙ -->
+
+    <img
+        id="hero"
+        draggable="false">
+
+    <!-- КУЧА ЛИСТЬЕВ -->
+
+    <div id="leafPile"></div>
+
+    <!-- МЕТЛА -->
+
+    <img
+        id="broom"
+        src="broom.png"
+        draggable="false">
+
+    <!-- ДАЛЬШЕ -->
+
+    <div id="nextContainer">
+
+        <button id="nextButton">
+            ДАЛЬШЕ →
+        </button>
+
+    </div>
+
+    <!-- ФИНАЛ -->
+
+    <div id="finish">
+
+        <div class="finishBox">
+
+            <h1>
+                🍂 Молодец!
+            </h1>
+
+            <p>
+                Ты нашёл всех,
+                кто прятался в листьях!
+            </p>
+
+            <button id="again">
+                ИГРАТЬ ЕЩЁ
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
 
 <script>
-/*
-  =========================================================
-  КОСТЯК ИГРЫ
-  Позже сюда можно подставить настоящие PNG:
-  background: fon.png
-  broom: broom.png
-  leaves: leaves/...
-  hidden objects: objects/...
-  =========================================================
-*/
 
-const ROUNDS = [
-  { emoji: "🐱", name: "кошка" },
-  { emoji: "⚽", name: "мяч" },
-  { emoji: "🐶", name: "щенок" },
-  { emoji: "🚗", name: "машинка" },
-  { emoji: "🦔", name: "ёжик" },
-  { emoji: "🧸", name: "игрушка" },
-  { emoji: "🐿️", name: "белочка" },
-  { emoji: "🎒", name: "рюкзак" }
-];
+/* ======================================================
+   НАСТРОЙКИ
+====================================================== */
 
-const LEAF_COUNT = 22;
-const SWEEPS_TO_REVEAL = 7;
+const OWNER = "Alekslogoped";
+const REPO = "listopad";
 
-let round = 0;
-let sweepCount = 0;
+const TOTAL_ROUNDS = 8;
+
+/* сколько листьев будет в кучке */
+
+const LEAF_COUNT = 32;
+
+/* ======================================================
+   ПЕРЕМЕННЫЕ
+====================================================== */
+
+let leaves = [];
+let heroes = [];
+
+let currentRound = 0;
+
+let sweepStage = 0;
+
 let dragging = false;
-let lastX = 0;
-let lastY = 0;
-let movedDuringDrag = false;
 
-const $ = selector => document.querySelector(selector);
+let previousX = 0;
 
-function showScreen(selector) {
-  document
-    .querySelectorAll(".screen")
-    .forEach(screen => screen.classList.remove("active"));
+let previousY = 0;
 
-  $(selector).classList.add("active");
+let sweepLock = false;
+
+let audioContext = null;
+
+let noiseBuffer = null;
+
+
+/* ======================================================
+   ЭЛЕМЕНТЫ
+====================================================== */
+
+const hero =
+    document.getElementById("hero");
+
+const broom =
+    document.getElementById("broom");
+
+const pile =
+    document.getElementById("leafPile");
+
+const hint =
+    document.getElementById("hint");
+
+const nextContainer =
+    document.getElementById("nextContainer");
+
+const roundText =
+    document.getElementById("roundText");
+
+const progress =
+    document.getElementById("progress");
+
+
+/* ======================================================
+   ЗАГРУЗКА КАРТИНОК ИЗ GITHUB
+====================================================== */
+
+async function loadFolder(folder) {
+
+    const url =
+        `https://api.github.com/repos/${OWNER}/${REPO}/contents/${folder}`;
+
+    const response =
+        await fetch(url);
+
+    if (!response.ok) {
+
+        throw new Error(
+            "Не удалось загрузить папку: " + folder
+        );
+    }
+
+    const files =
+        await response.json();
+
+    return files
+
+        .filter(file =>
+            file.type === "file" &&
+            /\.(png|jpg|jpeg|webp)$/i.test(file.name)
+        )
+
+        .sort((a,b) =>
+            a.name.localeCompare(
+                b.name,
+                undefined,
+                {numeric:true}
+            )
+        )
+
+        .map(file =>
+            file.download_url
+        );
 }
 
-function renderProgress() {
-  $("#progress").innerHTML = ROUNDS
-    .map((_, index) => {
-      const done = index < round ? "done" : "";
-      const now = index === round ? "now" : "";
-      return `<i class="dot ${done} ${now}"></i>`;
-    })
-    .join("");
+
+/* ======================================================
+   ЗАГРУЖАЕМ ЛИСТЬЯ И ГЕРОЕВ
+====================================================== */
+
+async function loadAssets() {
+
+    try {
+
+        leaves =
+            await loadFolder("leaves");
+
+        heroes =
+            await loadFolder("heroes");
+
+        console.log(
+            "Листья:",
+            leaves.length
+        );
+
+        console.log(
+            "Герои:",
+            heroes.length
+        );
+
+        startRound();
+
+    }
+
+    catch(error) {
+
+        console.error(error);
+
+        hint.innerHTML =
+            "Не удалось загрузить картинки";
+
+    }
 }
+
+
+/* ======================================================
+   ТОЧКИ РАУНДОВ
+====================================================== */
+
+function drawProgress() {
+
+    progress.innerHTML = "";
+
+    for (
+        let i = 0;
+        i < TOTAL_ROUNDS;
+        i++
+    ) {
+
+        const dot =
+            document.createElement("div");
+
+        dot.className =
+            "dot";
+
+        if (i < currentRound)
+            dot.classList.add("done");
+
+        if (i === currentRound)
+            dot.classList.add("active");
+
+        progress.appendChild(dot);
+    }
+}
+
+
+/* ======================================================
+   СОЗДАЁМ КУЧКУ
+====================================================== */
 
 function createLeafPile() {
-  const pile = $("#leafPile");
-  pile.innerHTML = "";
 
-  const leafEmoji = ["🍁", "🍂", "🍁", "🍂"];
+    pile.innerHTML = "";
 
-  for (let i = 0; i < LEAF_COUNT; i++) {
-    const leaf = document.createElement("div");
-    leaf.className = "leaf";
-    leaf.textContent = leafEmoji[i % leafEmoji.length];
+    for (
+        let i = 0;
+        i < LEAF_COUNT;
+        i++
+    ) {
 
-    const x = 20 + Math.random() * 60;
-    const y = 22 + Math.random() * 56;
-    const rotate = Math.round(Math.random() * 120 - 60);
+        if (!leaves.length)
+            return;
 
-    leaf.style.left = x + "%";
-    leaf.style.top = y + "%";
-    leaf.style.setProperty("--r", rotate + "deg");
+        const leaf =
+            document.createElement("img");
 
-    pile.appendChild(leaf);
-  }
+        leaf.className =
+            "leaf";
+
+        leaf.src =
+            leaves[
+                i % leaves.length
+            ];
+
+        /*
+        Три группы листьев.
+
+        Группа 0 улетит после первого взмаха.
+        Группа 1 после второго.
+        Группа 2 после третьего.
+        */
+
+        leaf.dataset.group =
+            i % 3;
+
+        const angle =
+            Math.random() *
+            Math.PI * 2;
+
+        const radius =
+            Math.sqrt(
+                Math.random()
+            ) * 42;
+
+        const x =
+            50 +
+            Math.cos(angle) *
+            radius;
+
+        const y =
+            50 +
+            Math.sin(angle) *
+            radius *
+            .55;
+
+        const rotation =
+            Math.random() *
+            360;
+
+        const scale =
+            .7 +
+            Math.random() *
+            .55;
+
+        leaf.dataset.x = x;
+        leaf.dataset.y = y;
+
+        leaf.style.left =
+            x + "%";
+
+        leaf.style.top =
+            y + "%";
+
+        leaf.style.transform =
+            `translate(-50%,-50%)
+             rotate(${rotation}deg)
+             scale(${scale})`;
+
+        pile.appendChild(leaf);
+    }
 }
 
-function resetBroom() {
-  const broom = $("#broom");
-  broom.style.left = "18%";
-  broom.style.top = "";
-  broom.style.bottom = "11%";
-}
+
+/* ======================================================
+   НОВЫЙ РАУНД
+====================================================== */
 
 function startRound() {
-  sweepCount = 0;
-  dragging = false;
-  movedDuringDrag = false;
 
-  showScreen("#play");
-  renderProgress();
+    sweepStage = 0;
 
-  $("#roundText").textContent =
-    `Раунд ${round + 1} из ${ROUNDS.length}`;
+    sweepLock = false;
 
-  $("#instruction").textContent =
-    "Возьми метлу и размети листья!";
+    hero.className = "";
 
-  $("#meterFill").style.width = "0%";
+    nextContainer
+        .classList
+        .remove("show");
 
-  $("#revealCard").classList.remove("show");
-  $("#hiddenObject").classList.remove("revealed");
+    hint.innerHTML =
+        "🧹 Проведи метлой по листьям";
 
-  const item = ROUNDS[round];
-  $("#hiddenObject").textContent = item.emoji;
-  $("#revealText").textContent =
-    `В листьях пряталась ${item.name}!`;
+    roundText.innerHTML =
+        `Раунд ${currentRound + 1} из 8`;
 
-  resetBroom();
-  createLeafPile();
+    drawProgress();
+
+    /* герой */
+
+    if (heroes[currentRound]) {
+
+        hero.src =
+            heroes[currentRound];
+
+        hero.style.display =
+            "block";
+
+    }
+
+    else {
+
+        hero.style.display =
+            "none";
+    }
+
+    createLeafPile();
+
+    resetBroom();
 }
 
-function scatterLeaves(strength = 1) {
-  const leaves = [...document.querySelectorAll(".leaf")];
 
-  leaves.forEach((leaf, index) => {
-    const angle = (Math.PI * 2 * index) / leaves.length
-      + Math.random() * .65;
+/* ======================================================
+   МЕТЛА СТАРТУЕТ СПРАВА
+====================================================== */
 
-    const distance = 32 + Math.random() * 42 * strength;
+function resetBroom() {
 
-    const newX = 50 + Math.cos(angle) * distance;
-    const newY = 50 + Math.sin(angle) * distance * .65;
+    broom.style.left = "";
 
-    const rotate =
-      Math.round(Math.random() * 520 - 260);
+    broom.style.top = "";
 
-    leaf.style.left = newX + "%";
-    leaf.style.top = newY + "%";
-    leaf.style.transform =
-      `translate(-50%, -50%) rotate(${rotate}deg) scale(${0.86 + Math.random() * .2})`;
-  });
+    broom.style.right =
+        "4%";
+
+    broom.style.bottom =
+        "4%";
 }
 
-function doSweep() {
-  if (sweepCount >= SWEEPS_TO_REVEAL) return;
 
-  sweepCount++;
+/* ======================================================
+   ЗВУК ПОДМЕТАНИЯ
+====================================================== */
 
-  const progress =
-    Math.min(100, (sweepCount / SWEEPS_TO_REVEAL) * 100);
+function initAudio() {
 
-  $("#meterFill").style.width = progress + "%";
+    if (audioContext)
+        return;
 
-  scatterLeaves(.25 + sweepCount / SWEEPS_TO_REVEAL);
+    audioContext =
+        new (
+            window.AudioContext ||
+            window.webkitAudioContext
+        )();
 
-  if (sweepCount >= SWEEPS_TO_REVEAL) {
-    revealObject();
-  }
+    const length =
+        audioContext.sampleRate *
+        1.2;
+
+    noiseBuffer =
+        audioContext.createBuffer(
+            1,
+            length,
+            audioContext.sampleRate
+        );
+
+    const data =
+        noiseBuffer
+        .getChannelData(0);
+
+    for (
+        let i = 0;
+        i < length;
+        i++
+    ) {
+
+        data[i] =
+            Math.random() * 2 - 1;
+    }
 }
 
-function revealObject() {
-  const leaves = [...document.querySelectorAll(".leaf")];
 
-  leaves.forEach((leaf, index) => {
-    const goRight = index % 2 === 0;
-    const x = goRight
-      ? 95 + Math.random() * 35
-      : -25 - Math.random() * 35;
+function playSweepSound() {
 
-    const y = -10 + Math.random() * 115;
+    initAudio();
 
-    leaf.style.left = x + "%";
-    leaf.style.top = y + "%";
-    leaf.style.opacity = ".25";
-    leaf.style.transform =
-      `translate(-50%, -50%) rotate(${Math.random() * 800 - 400}deg) scale(.6)`;
-  });
+    const source =
+        audioContext
+        .createBufferSource();
 
-  $("#hiddenObject").classList.add("revealed");
-  $("#instruction").textContent = "Кто же это?";
+    source.buffer =
+        noiseBuffer;
 
-  setTimeout(() => {
-    $("#revealCard").classList.add("show");
-  }, 650);
+    const filter =
+        audioContext
+        .createBiquadFilter();
+
+    filter.type =
+        "bandpass";
+
+    filter.frequency.value =
+        800;
+
+    filter.Q.value =
+        .6;
+
+    const gain =
+        audioContext
+        .createGain();
+
+    const now =
+        audioContext.currentTime;
+
+    gain.gain
+        .setValueAtTime(
+            .001,
+            now
+        );
+
+    gain.gain
+        .exponentialRampToValueAtTime(
+            .17,
+            now + .06
+        );
+
+    gain.gain
+        .exponentialRampToValueAtTime(
+            .001,
+            now + .8
+        );
+
+    source
+        .connect(filter)
+        .connect(gain)
+        .connect(
+            audioContext.destination
+        );
+
+    source.start();
+
+    source.stop(
+        now + .85
+    );
 }
 
-function nextRound() {
-  if (round < ROUNDS.length - 1) {
-    round++;
+
+/* ======================================================
+   ВОЛШЕБНЫЙ ЗВУК
+====================================================== */
+
+function playMagicSound() {
+
+    initAudio();
+
+    const notes =
+        [
+            523,
+            659,
+            784,
+            1047
+        ];
+
+    const now =
+        audioContext.currentTime;
+
+    notes.forEach(
+        (frequency,index) => {
+
+        const oscillator =
+            audioContext
+            .createOscillator();
+
+        const gain =
+            audioContext
+            .createGain();
+
+        oscillator.type =
+            "sine";
+
+        oscillator.frequency.value =
+            frequency;
+
+        const start =
+            now +
+            index * .11;
+
+        gain.gain
+            .setValueAtTime(
+                .001,
+                start
+            );
+
+        gain.gain
+            .exponentialRampToValueAtTime(
+                .13,
+                start + .04
+            );
+
+        gain.gain
+            .exponentialRampToValueAtTime(
+                .001,
+                start + .6
+            );
+
+        oscillator
+            .connect(gain)
+            .connect(
+                audioContext.destination
+            );
+
+        oscillator.start(start);
+
+        oscillator.stop(
+            start + .65
+        );
+    });
+}
+
+
+/* ======================================================
+   РАЗЛЁТ ЛИСТЬЕВ
+====================================================== */
+
+function scatterLeaves(stage,direction) {
+
+    const allLeaves =
+        document.querySelectorAll(
+            ".leaf"
+        );
+
+    allLeaves.forEach(
+        (leaf,index) => {
+
+        const group =
+            Number(
+                leaf.dataset.group
+            );
+
+        /*
+        На каждом взмахе
+        улетает новая треть.
+        */
+
+        if (
+            group !== stage - 1
+        )
+            return;
+
+        const startX =
+            Number(
+                leaf.dataset.x
+            );
+
+        const startY =
+            Number(
+                leaf.dataset.y
+            );
+
+        /*
+        Листья летят преимущественно
+        в сторону движения метлы.
+        */
+
+        const distance =
+            stage === 3
+            ? 100 + Math.random()*55
+            : 50 + Math.random()*35;
+
+        const newX =
+            startX +
+            direction *
+            distance;
+
+        const newY =
+            startY -
+            15 +
+            Math.random() *
+            55;
+
+        const rotation =
+            Math.random() *
+            900 -
+            450;
+
+        leaf.style.left =
+            newX + "%";
+
+        leaf.style.top =
+            newY + "%";
+
+        leaf.style.transform =
+            `translate(-50%,-50%)
+             rotate(${rotation}deg)
+             scale(.65)`;
+
+        if (stage === 3) {
+
+            setTimeout(() => {
+
+                leaf.style.opacity =
+                    "0";
+
+            },300);
+        }
+    });
+}
+
+
+/* ======================================================
+   ОТКРЫВАЕМ ГЕРОЯ
+====================================================== */
+
+function revealHero(stage) {
+
+    hero.className =
+        "stage" + stage;
+
+    if (stage === 1) {
+
+        hint.innerHTML =
+            "🍂 Кто-то показался! Ещё раз!";
+
+    }
+
+    if (stage === 2) {
+
+        hint.innerHTML =
+            "🍁 Уже почти видно! Ещё один взмах!";
+
+    }
+
+    if (stage === 3) {
+
+        hint.innerHTML =
+            "✨ Вот кто здесь спрятался!";
+
+        setTimeout(() => {
+
+            playMagicSound();
+
+            sparkles();
+
+            nextContainer
+                .classList
+                .add("show");
+
+        },650);
+    }
+}
+
+
+/* ======================================================
+   ЗАСЧИТЫВАЕМ ВЗМАХ
+====================================================== */
+
+function makeSweep(direction) {
+
+    if (
+        sweepLock ||
+        sweepStage >= 3
+    )
+        return;
+
+    sweepLock = true;
+
+    sweepStage++;
+
+    playSweepSound();
+
+    scatterLeaves(
+        sweepStage,
+        direction
+    );
+
+    revealHero(
+        sweepStage
+    );
+
+    setTimeout(() => {
+
+        sweepLock = false;
+
+    },850);
+}
+
+
+/* ======================================================
+   ПРОВЕРЯЕМ, КАСАЕТСЯ ЛИ МЕТЛА КУЧКИ
+====================================================== */
+
+function broomTouchesPile() {
+
+    const broomRect =
+        broom
+        .getBoundingClientRect();
+
+    const pileRect =
+        pile
+        .getBoundingClientRect();
+
+    /*
+    Берём нижнюю часть метлы,
+    где находится сама щётка.
+    */
+
+    const x =
+        broomRect.left +
+        broomRect.width *
+        .38;
+
+    const y =
+        broomRect.top +
+        broomRect.height *
+        .72;
+
+    return (
+
+        x > pileRect.left &&
+
+        x < pileRect.right &&
+
+        y > pileRect.top &&
+
+        y < pileRect.bottom
+    );
+}
+
+
+/* ======================================================
+   ПЕРЕМЕЩЕНИЕ МЕТЛЫ
+====================================================== */
+
+function moveBroom(x,y) {
+
+    const gameRect =
+        document
+        .getElementById("game")
+        .getBoundingClientRect();
+
+    const broomRect =
+        broom
+        .getBoundingClientRect();
+
+    let left =
+        x -
+        gameRect.left -
+        broomRect.width *
+        .45;
+
+    let top =
+        y -
+        gameRect.top -
+        broomRect.height *
+        .55;
+
+    left =
+        Math.max(
+            -broomRect.width*.2,
+            Math.min(
+                gameRect.width -
+                broomRect.width*.65,
+                left
+            )
+        );
+
+    top =
+        Math.max(
+            -broomRect.height*.15,
+            Math.min(
+                gameRect.height -
+                broomRect.height*.7,
+                top
+            )
+        );
+
+    broom.style.left =
+        left + "px";
+
+    broom.style.top =
+        top + "px";
+
+    broom.style.right =
+        "auto";
+
+    broom.style.bottom =
+        "auto";
+}
+
+
+/* ======================================================
+   УПРАВЛЕНИЕ МЫШЬЮ / ПАЛЬЦЕМ
+====================================================== */
+
+broom.addEventListener(
+    "pointerdown",
+    event => {
+
+    initAudio();
+
+    dragging = true;
+
+    previousX =
+        event.clientX;
+
+    previousY =
+        event.clientY;
+
+    broom
+        .classList
+        .add("dragging");
+
+    broom.setPointerCapture?.(
+        event.pointerId
+    );
+
+    moveBroom(
+        event.clientX,
+        event.clientY
+    );
+});
+
+
+broom.addEventListener(
+    "pointermove",
+    event => {
+
+    if (!dragging)
+        return;
+
+    const dx =
+        event.clientX -
+        previousX;
+
+    const dy =
+        event.clientY -
+        previousY;
+
+    const distance =
+        Math.hypot(dx,dy);
+
+    moveBroom(
+        event.clientX,
+        event.clientY
+    );
+
+    /*
+    Нужно действительно провести
+    метлой через листья.
+    */
+
+    if (
+        distance > 50 &&
+        broomTouchesPile()
+    ) {
+
+        const direction =
+            dx >= 0
+            ? 1
+            : -1;
+
+        makeSweep(direction);
+
+        previousX =
+            event.clientX;
+
+        previousY =
+            event.clientY;
+    }
+});
+
+
+function stopDragging() {
+
+    dragging = false;
+
+    broom
+        .classList
+        .remove("dragging");
+}
+
+
+broom.addEventListener(
+    "pointerup",
+    stopDragging
+);
+
+broom.addEventListener(
+    "pointercancel",
+    stopDragging
+);
+
+
+/* ======================================================
+   ИСКРЫ
+====================================================== */
+
+function sparkles() {
+
+    const game =
+        document
+        .getElementById("game");
+
+    const symbols =
+        [
+            "✨",
+            "⭐",
+            "✨",
+            "🍁"
+        ];
+
+    for (
+        let i = 0;
+        i < 16;
+        i++
+    ) {
+
+        const spark =
+            document.createElement(
+                "div"
+            );
+
+        spark.className =
+            "spark";
+
+        spark.innerHTML =
+            symbols[
+                i %
+                symbols.length
+            ];
+
+        spark.style.left =
+            40 +
+            Math.random()*20 +
+            "%";
+
+        spark.style.top =
+            50 +
+            Math.random()*20 +
+            "%";
+
+        spark.style.animationDelay =
+            Math.random()*.3 +
+            "s";
+
+        game.appendChild(spark);
+
+        setTimeout(() => {
+
+            spark.remove();
+
+        },1800);
+    }
+}
+
+
+/* ======================================================
+   СЛЕДУЮЩИЙ РАУНД
+====================================================== */
+
+document
+.getElementById("nextButton")
+.addEventListener(
+    "click",
+    () => {
+
+    if (
+        currentRound <
+        TOTAL_ROUNDS - 1
+    ) {
+
+        currentRound++;
+
+        startRound();
+
+    }
+
+    else {
+
+        document
+        .getElementById("finish")
+        .style.display =
+        "flex";
+    }
+});
+
+
+/* ======================================================
+   ИГРАТЬ СНОВА
+====================================================== */
+
+document
+.getElementById("again")
+.addEventListener(
+    "click",
+    () => {
+
+    currentRound = 0;
+
+    document
+        .getElementById("finish")
+        .style.display =
+        "none";
+
     startRound();
-  } else {
-    showScreen("#finish");
-  }
-}
-
-/* УПРАВЛЕНИЕ МЕТЛОЙ */
-
-function moveBroom(clientX, clientY) {
-  const scene = $("#scene");
-  const broom = $("#broom");
-  const rect = scene.getBoundingClientRect();
-
-  const x = clientX - rect.left;
-  const y = clientY - rect.top;
-
-  const broomRect = broom.getBoundingClientRect();
-
-  const left = Math.max(
-    0,
-    Math.min(rect.width - broomRect.width, x - broomRect.width / 2)
-  );
-
-  const top = Math.max(
-    0,
-    Math.min(rect.height - broomRect.height, y - broomRect.height / 2)
-  );
-
-  broom.style.left = left + "px";
-  broom.style.top = top + "px";
-  broom.style.bottom = "auto";
-}
-
-function broomPointerDown(event) {
-  if (sweepCount >= SWEEPS_TO_REVEAL) return;
-
-  dragging = true;
-  movedDuringDrag = false;
-
-  lastX = event.clientX;
-  lastY = event.clientY;
-
-  $("#broom").classList.add("dragging");
-  $("#broom").setPointerCapture?.(event.pointerId);
-
-  moveBroom(event.clientX, event.clientY);
-}
-
-function broomPointerMove(event) {
-  if (!dragging) return;
-
-  const dx = event.clientX - lastX;
-  const dy = event.clientY - lastY;
-  const distance = Math.hypot(dx, dy);
-
-  moveBroom(event.clientX, event.clientY);
-
-  if (distance > 34) {
-    movedDuringDrag = true;
-    lastX = event.clientX;
-    lastY = event.clientY;
-    doSweep();
-  }
-}
-
-function broomPointerUp(event) {
-  if (!dragging) return;
-
-  dragging = false;
-  $("#broom").classList.remove("dragging");
-
-  /*
-    Для самых маленьких:
-    если ребёнок просто нажал на метлу, а не тащил,
-    это тоже считается одним взмахом.
-  */
-  if (!movedDuringDrag) {
-    doSweep();
-  }
-}
-
-/* КНОПКИ */
-
-$("#startBtn").addEventListener("click", () => {
-  round = 0;
-  startRound();
 });
 
-$("#nextBtn").addEventListener("click", nextRound);
 
-$("#againBtn").addEventListener("click", () => {
-  round = 0;
-  startRound();
-});
+/* ======================================================
+   ЗАПУСК
+====================================================== */
 
-$("#broom").addEventListener("pointerdown", broomPointerDown);
-$("#broom").addEventListener("pointermove", broomPointerMove);
-$("#broom").addEventListener("pointerup", broomPointerUp);
-$("#broom").addEventListener("pointercancel", broomPointerUp);
+loadAssets();
 
-renderProgress();
 </script>
 
 </body>
