@@ -121,71 +121,12 @@ html, body {
 
 /* ---------- ГЕРОЙ ---------- */
 
+/* Герой сразу целиком находится под листьями. */
 #hero {
-    position: absolute;
-
-    z-index: 10;
-
-    left: 50%;
-    top: 67%;
-
-    width: min(26vw, 300px);
-    height: min(26vw, 300px);
-
-    object-fit: contain;
-
-    transform:
-        translate(-50%, -50%)
-        scale(.92);
-
-    opacity: 0;
-
-    clip-path: inset(100% 0 0 0);
-
-    transition:
-        clip-path .8s ease,
-        opacity .6s ease,
-        transform .8s ease;
-
-    filter:
-        drop-shadow(0 8px 8px rgba(0,0,0,.2));
-
-    pointer-events: none;
-}
-
-/* после первого взмаха */
-
-#hero.stage1 {
-    opacity: 1;
-
-    clip-path:
-        inset(72% 0 0 0);
-}
-
-/* после второго */
-
-#hero.stage2 {
-    opacity: 1;
-
-    clip-path:
-        inset(38% 0 0 0);
-
-    transform:
-        translate(-50%, -50%)
-        scale(.96);
-}
-
-/* после третьего */
-
-#hero.stage3 {
-    opacity: 1;
-
-    clip-path:
-        inset(0);
-
-    transform:
-        translate(-50%, -50%)
-        scale(1);
+ position:absolute; z-index:10; left:50%; top:67%;
+ width:min(26vw,300px); height:min(26vw,300px); object-fit:contain;
+ transform:translate(-50%,-50%); opacity:1;
+ filter:drop-shadow(0 8px 8px rgba(0,0,0,.2)); pointer-events:none;
 }
 
 /* ---------- КУЧКА ---------- */
@@ -837,8 +778,6 @@ function startRound() {
 
     sweepLock = false;
 
-    hero.className = "";
-
     nextContainer
         .classList
         .remove("show");
@@ -1166,41 +1105,12 @@ function scatterLeaves(stage,direction) {
 ====================================================== */
 
 function revealHero(stage) {
-
-    hero.className =
-        "stage" + stage;
-
-    if (stage === 1) {
-
-        hint.innerHTML =
-            "🍂 Кто-то показался! Ещё раз!";
-
-    }
-
-    if (stage === 2) {
-
-        hint.innerHTML =
-            "🍁 Уже почти видно! Ещё один взмах!";
-
-    }
-
-    if (stage === 3) {
-
-        hint.innerHTML =
-            "✨ Вот кто здесь спрятался!";
-
-        setTimeout(() => {
-
-            playMagicSound();
-
-            sparkles();
-
-            nextContainer
-                .classList
-                .add("show");
-
-        },650);
-    }
+ if(stage===1) hint.innerHTML="🍂 Ой! Кто-то прячется под листьями! Ещё раз!";
+ if(stage===2) hint.innerHTML="🍁 Уже лучше видно! Ещё один взмах!";
+ if(stage===3){
+   hint.innerHTML="✨ Вот кто здесь спрятался!";
+   setTimeout(()=>{ playMagicSound(); sparkles(); nextContainer.classList.add("show"); },650);
+ }
 }
 
 
