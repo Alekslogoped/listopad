@@ -138,13 +138,13 @@ html, body {
     z-index: 20;
 
     left: 50%;
-    top: 70%;
+    top: 67%;
 
     transform:
         translate(-50%, -50%);
 
-    width: min(48vw, 560px);
-    height: min(31vw, 340px);
+    width: min(52vw, 620px);
+    height: min(38vw, 420px);
 
     pointer-events: none;
 }
@@ -215,10 +215,10 @@ html, body {
 #janitor {
     position: absolute;
     z-index: 35;
-    left: -3%;
-    bottom: 5%;
-    width: min(80vw, 1000px);
-    height: min(124vw, 1380px);
+    left: -6%;
+    bottom: 3%;
+    width: min(120vw, 1500px);
+    height: min(186vw, 2070px);
     object-fit: contain;
     object-position: left bottom;
     pointer-events: none;
@@ -450,10 +450,10 @@ html, body {
     }
 
     #janitor {
-        width: 88vw;
-        height: 136vw;
-        left: -6%;
-        bottom: 4%;
+        width: 132vw;
+        height: 204vw;
+        left: -10%;
+        bottom: 2%;
     }
 
     #broom {
@@ -568,7 +568,7 @@ const TOTAL_ROUNDS = 8;
 
 /* сколько листьев будет в кучке */
 
-const LEAF_COUNT = 60;
+const LEAF_COUNT = 90;
 
 /* ======================================================
    ПЕРЕМЕННЫЕ
@@ -789,11 +789,15 @@ function createLeafPile() {
             Math.cos(angle) *
             radius;
 
+        /*
+        Основная масса листьев поднята выше,
+        чтобы в начале закрывать голову и верх героя.
+        */
         const y =
-            50 +
+            40 +
             Math.sin(angle) *
             radius *
-            .55;
+            .62;
 
         const rotation =
             Math.random() *
@@ -817,6 +821,38 @@ function createLeafPile() {
             `translate(-50%,-50%)
              rotate(${rotation}deg)
              scale(${scale})`;
+
+        pile.appendChild(leaf);
+    }
+
+    /*
+       Дополнительная плотная верхушка кучки.
+       Эти листья особенно хорошо закрывают голову героя.
+    */
+    for (let i = 0; i < 24; i++) {
+
+        if (!leaves.length) break;
+
+        const leaf = document.createElement("img");
+        leaf.className = "leaf";
+        leaf.src = leaves[(i + 2) % leaves.length];
+
+        /* Верхушка уходит постепенно на всех трёх взмахах */
+        leaf.dataset.group = i % 3;
+
+        const x = 32 + Math.random() * 36;
+        const y = 8 + Math.random() * 30;
+        const rotation = Math.random() * 360;
+        const scale = .85 + Math.random() * .55;
+
+        leaf.dataset.x = x;
+        leaf.dataset.y = y;
+
+        leaf.style.left = x + "%";
+        leaf.style.top = y + "%";
+        leaf.style.zIndex = String(40 + i % 8);
+        leaf.style.transform =
+            `translate(-50%,-50%) rotate(${rotation}deg) scale(${scale})`;
 
         pile.appendChild(leaf);
     }
