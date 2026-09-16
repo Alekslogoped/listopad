@@ -154,20 +154,21 @@ html, body {
 .leaf {
 
     position: absolute;
+    will-change: transform, left, top, opacity;
 
     width: clamp(48px, 5.5vw, 82px);
     height: clamp(48px, 5.5vw, 82px);
 
     object-fit: contain;
 
-    filter:
-        drop-shadow(0 4px 3px rgba(0,0,0,.18));
+    /* Без тяжёлой тени на каждом листе — быстрее в Genially */
+    filter: none;
 
     transition:
-        left 1.6s cubic-bezier(.16,.75,.22,1),
-        top 1.6s cubic-bezier(.16,.75,.22,1),
-        transform 1.7s ease,
-        opacity 1.5s ease;
+        left .72s cubic-bezier(.16,.75,.22,1),
+        top .72s cubic-bezier(.16,.75,.22,1),
+        transform .78s ease,
+        opacity .68s ease;
 }
 
 /* ---------- МЕТЛА ---------- */
@@ -215,10 +216,10 @@ html, body {
 #janitor {
     position: absolute;
     z-index: 35;
-    left: 0.5%;
+    left: 1.5%;
     bottom: 5%;
-    width: min(52vw, 650px);
-    height: min(82vw, 920px);
+    width: min(37vw, 465px);
+    height: min(62vw, 690px);
     object-fit: contain;
     object-position: left bottom;
     pointer-events: none;
@@ -450,9 +451,9 @@ html, body {
     }
 
     #janitor {
-        width: 58vw;
-        height: 91vw;
-        left: -1%;
+        width: 43vw;
+        height: 69vw;
+        left: 0%;
         bottom: 4%;
     }
 
@@ -568,7 +569,7 @@ const TOTAL_ROUNDS = 8;
 
 /* сколько листьев будет в кучке */
 
-const LEAF_COUNT = 72;
+const LEAF_COUNT = 54;
 
 /* ======================================================
    ПЕРЕМЕННЫЕ
@@ -821,7 +822,7 @@ function createLeafPile() {
        Небольшая неровная верхушка кучки:
        закрывает верх героя, но не превращает листья в шар.
     */
-    for (let i = 0; i < 12; i++) {
+    for (let i = 0; i < 9; i++) {
 
         if (!leaves.length) break;
 
@@ -1240,7 +1241,7 @@ function revealHero(stage) {
                 .classList
                 .add("show");
 
-        }, 1550);
+        }, 820);
     }
 }
 
@@ -1282,7 +1283,7 @@ function makeSweep(direction) {
 
         sweepLock = false;
 
-    },850);
+    },520);
 }
 
 
