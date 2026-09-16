@@ -138,13 +138,13 @@ html, body {
     z-index: 20;
 
     left: 50%;
-    top: 67%;
+    top: 69%;
 
     transform:
         translate(-50%, -50%);
 
-    width: min(52vw, 620px);
-    height: min(38vw, 420px);
+    width: min(46vw, 560px);
+    height: min(31vw, 350px);
 
     pointer-events: none;
 }
@@ -215,10 +215,10 @@ html, body {
 #janitor {
     position: absolute;
     z-index: 35;
-    left: 1%;
-    bottom: 6%;
-    width: min(43vw, 540px);
-    height: min(68vw, 760px);
+    left: 0.5%;
+    bottom: 5%;
+    width: min(52vw, 650px);
+    height: min(82vw, 920px);
     object-fit: contain;
     object-position: left bottom;
     pointer-events: none;
@@ -443,17 +443,17 @@ html, body {
 
     #leafPile {
 
-        width: 64vw;
-        height: 42vw;
+        width: 58vw;
+        height: 39vw;
 
         top: 72%;
     }
 
     #janitor {
-        width: 48vw;
-        height: 76vw;
-        left: 0%;
-        bottom: 5%;
+        width: 58vw;
+        height: 91vw;
+        left: -1%;
+        bottom: 4%;
     }
 
     #broom {
@@ -568,7 +568,7 @@ const TOTAL_ROUNDS = 8;
 
 /* сколько листьев будет в кучке */
 
-const LEAF_COUNT = 90;
+const LEAF_COUNT = 72;
 
 /* ======================================================
    ПЕРЕМЕННЫЕ
@@ -775,29 +775,21 @@ function createLeafPile() {
         leaf.dataset.group =
             i % 3;
 
-        const angle =
-            Math.random() *
-            Math.PI * 2;
+        /*
+        Естественная кучка: широкая снизу и уже сверху.
+        Не ровный треугольник — добавляем случайность по краям.
+        */
+        const vertical = Math.random();
+        const y = 18 + vertical * 70;
 
-        const radius =
-            Math.sqrt(
-                Math.random()
-            ) * 42;
+        /* Чем выше лист, тем уже кучка */
+        const halfWidth =
+            10 + vertical * 38;
 
         const x =
             50 +
-            Math.cos(angle) *
-            radius;
-
-        /*
-        Основная масса листьев поднята выше,
-        чтобы в начале закрывать голову и верх героя.
-        */
-        const y =
-            40 +
-            Math.sin(angle) *
-            radius *
-            .62;
+            (Math.random() * 2 - 1) * halfWidth +
+            (Math.random() * 6 - 3);
 
         const rotation =
             Math.random() *
@@ -826,10 +818,10 @@ function createLeafPile() {
     }
 
     /*
-       Дополнительная плотная верхушка кучки.
-       Эти листья особенно хорошо закрывают голову героя.
+       Небольшая неровная верхушка кучки:
+       закрывает верх героя, но не превращает листья в шар.
     */
-    for (let i = 0; i < 24; i++) {
+    for (let i = 0; i < 12; i++) {
 
         if (!leaves.length) break;
 
@@ -840,8 +832,8 @@ function createLeafPile() {
         /* Верхушка уходит постепенно на всех трёх взмахах */
         leaf.dataset.group = i % 3;
 
-        const x = 32 + Math.random() * 36;
-        const y = 8 + Math.random() * 30;
+        const x = 41 + Math.random() * 18;
+        const y = 7 + Math.random() * 24;
         const rotation = Math.random() * 360;
         const scale = .85 + Math.random() * .55;
 
