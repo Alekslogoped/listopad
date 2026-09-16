@@ -868,6 +868,12 @@ function startRound() {
     hint.innerHTML =
         "🧹 Проведи метлой по листьям";
 
+    /* Каждый новый раунд начинаем с удивлённого дворника */
+    janitor.src = "janitor/surprised.png";
+    janitor.className = "";
+    void janitor.offsetWidth;
+    janitor.className = "surprised";
+
     /* В начале каждого раунда дворник удивлён */
     janitor.src = "janitor/surprised.png";
     janitor.className = "surprised";
@@ -1192,12 +1198,50 @@ function scatterLeaves(stage,direction) {
 ====================================================== */
 
 function revealHero(stage) {
- if(stage===1) hint.innerHTML="🍂 Ой! Кто-то прячется под листьями! Ещё раз!";
- if(stage===2) hint.innerHTML="🍁 Уже лучше видно! Ещё один взмах!";
- if(stage===3){
-   hint.innerHTML="✨ Вот кто здесь спрятался!";
-   setTimeout(()=>{ playMagicSound(); sparkles(); nextContainer.classList.add("show"); },650);
- }
+
+    if (stage === 1) {
+        hint.innerHTML =
+            "🍂 Ой! Кто-то прячется под листьями! Ещё раз!";
+    }
+
+    if (stage === 2) {
+        hint.innerHTML =
+            "🍁 Уже лучше видно! Ещё один взмах!";
+    }
+
+    if (stage === 3) {
+
+        hint.innerHTML =
+            "✨ Вот кто здесь спрятался!";
+
+        /*
+           Ждём завершения разлёта листьев,
+           затем ОБЯЗАТЕЛЬНО меняем дворника на wow.png.
+        */
+        setTimeout(() => {
+
+            janitor.className = "";
+            janitor.src = "janitor/wow.png?v=" + Date.now();
+
+            janitor.onload = () => {
+                janitor.className = "wow";
+            };
+
+            /* Если картинка уже была в кэше */
+            if (janitor.complete) {
+                void janitor.offsetWidth;
+                janitor.className = "wow";
+            }
+
+            playMagicSound();
+            sparkles();
+
+            nextContainer
+                .classList
+                .add("show");
+
+        }, 1550);
+    }
 }
 
 
